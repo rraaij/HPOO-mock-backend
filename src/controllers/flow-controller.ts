@@ -1,4 +1,5 @@
-import {Body, Controller, Get, Headers, HttpException, HttpStatus, Param, Post, Response} from 'nest.js';
+import {Body, Controller, Get, Headers, HttpStatus, Param, Post, Response} from '@nestjs/common';
+import { HttpException } from '@nestjs/core';
 import { FlowService } from '../services/flow-service';
 
 @Controller('oo/rest/v2')
@@ -16,7 +17,7 @@ export class FlowController {
 
   // Get a token
   @Get('/executions')
-  async getToken(@Response() res, @Headers('headers') headers) {
+  async getToken(@Response() response, @Headers('headers') headers) {
     // -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)}
     // -ContentType "application/json"
     // -Accept "application/json"
@@ -25,7 +26,16 @@ export class FlowController {
     }
     const token = await this.flowService.getToken();
     console.log('>>> [getToken]');
-    return res.status(HttpStatus.OK).json(token);
+    response.status(HttpStatus.OK);
+    response.setHeader('X-CSRF-HEADER', 'X-CSRF-TOKEN');
+    response.setHeader('X-CSRF-PARAM', '_csrf');
+    response.setHeader('X-CSRF-TOKEN', token);
+    response.setHeader('Content-Type', 'application/json');
+    response.cookie('name', 'value', { domain: '.rabobank.nl', path: '/', secure: false, HttpOnly: true });
+
+    response.end();
+
+    return response;
   }
 
   // starting a flow

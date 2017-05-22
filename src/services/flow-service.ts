@@ -1,4 +1,8 @@
-import {Component} from "nest.js";
+import {Component} from '@nestjs/common';
+
+//npm WARN deprecated nest.js@1.0.6:
+// WARNING: This project has been split into several packages with @nestjs prefix.
+// Install using @nestjs/core, @nestjs/common, @nestjs/microservices, @nestjs/websockets instead.
 
 @Component()
 export class FlowService {
